@@ -92,7 +92,8 @@ def decrypt(password, directory="."):
                 outfile = open(outname, "wb")
                 outfile.write(decrypted)
                 outfile.close()
-                print("wrote "+outname)
+                if feedback:
+                    print("wrote "+outname)
 
 def decrypt_widget():
     import time
