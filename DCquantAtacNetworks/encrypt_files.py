@@ -61,10 +61,14 @@ def encrypt(password, directory=".", delete=False):
                 os.unlink(filename)
 
 def decrypt(password, directory="."):
+    count = 0
     for filename in get_filepaths(directory):
         if filename.endswith(".crypt"):
+            count += 1
+            feedback = (count % 100 == 1)
             outname = filename[:-6]
-            print("decrypting "+filename+" to "+outname)
+            if feedback:
+                print(str(count) + ": decrypting "+filename+" to "+outname)
             infile = open(filename, "rb")
             sig = infile.readline()[:-1]
             encrypted = infile.read()
@@ -79,9 +83,11 @@ def decrypt(password, directory="."):
             elif os.path.exists(outname):
                 text = open(outname, "rb").read()
                 if text==decrypted:
-                    print("Existing file matches "+outname)
+                    if feedback:
+                        print("    Existing file matches "+outname)
                 else:
                     print("EXISTING FILE DOES NOT MATCH "+outname)
+                    raise ValueError, "safety: don't overwrite existing file. " + repr(outname)
             else:
                 outfile = open(outname, "wb")
                 outfile.write(decrypted)
