@@ -12,6 +12,7 @@ Encode files and delete unencrypted files:
 """
 
 import os
+import time
 import glob
 from Crypto.Cipher import ARC4
 import hashlib
@@ -71,8 +72,10 @@ def decrypt(password, directory="."):
             decrypted = encoder.decrypt(encrypted)
             sig2 = signature(decrypted)
             #print (decrypted, encrypted, sig, sig2)
+            time.sleep(0.01)  # allow kill signal to sneak in
             if sig != sig2:
                 print(filename + " HASH SIGNATURE DOESN'T MATCH.")
+                raise ValueError, "bad password?"
             elif os.path.exists(outname):
                 text = open(outname, "rb").read()
                 if text==decrypted:
